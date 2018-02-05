@@ -18,7 +18,11 @@ def do_wrapper(func):
         headers = dict(self.headers.items())
 
         try:
-            target = headers.pop('X-Relay-Target')
+            try:
+                target = headers.pop('X-Relay-Target')
+            except KeyError:
+                target = headers.pop('x-relay-target')
+
         except KeyError:
             target = args.default_target
 
@@ -43,7 +47,7 @@ class Relay(base_http_server.BaseHTTPRequestHandler):
 
     @do_wrapper
     def do_HEAD(self):
-        print('not implemented!')
+        return requests.head(self.target_url, headers=self.target_headers)
 
     @do_wrapper
     def do_POST(self):
