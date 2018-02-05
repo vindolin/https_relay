@@ -17,6 +17,8 @@ curl -X POST "http://localhost:8077/botXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 -d "chat_id=XXXXXXXXX&text=Alarm!" --header "X-Relay-Target: api.telegram.org"
 ```
 
+Just replace the original host:port with the address of the relay and provide the target host in the X-Relay-Target header.
+
 Or if you can't add the X-Relay-Target header, you can start the relay with a default target host this way:
 
 ```bash
