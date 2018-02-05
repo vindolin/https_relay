@@ -1,6 +1,12 @@
-import http.server
-import socketserver
-from urllib.parse import parse_qs
+try:
+    import BaseHTTPServer as base_http_server
+    import SocketServer as socketserver
+    from urlparse import parse_qs
+except ImportError:
+    import http.server as base_http_server
+    import socketserver
+    from urllib.parse import parse_qs
+
 import requests
 import argparse
 from functools import wraps
@@ -30,7 +36,7 @@ def do_wrapper(func):
     return wrapper
 
 
-class Relay(http.server.BaseHTTPRequestHandler):
+class Relay(base_http_server.BaseHTTPRequestHandler):
     @do_wrapper
     def do_GET(self):
         return requests.get(self.target_url, headers=self.target_headers)
@@ -41,7 +47,11 @@ class Relay(http.server.BaseHTTPRequestHandler):
 
     @do_wrapper
     def do_POST(self):
-        content_length = int(self.target_headers.pop('Content-Length'))
+        try:
+            content_length = int(self.target_headers.pop('Content-Length'))
+        except KeyError:
+            content_length = int(self.target_headers.pop('content-length'))  # python 2
+
         post_data = parse_qs(self.rfile.read(content_length))
         return requests.post(self.target_url, headers=self.target_headers, data=post_data)
 
