@@ -1,6 +1,7 @@
 # https_relay
 
-Simple relay that relays http connections to https targets. (Microcontrollers love the simpler http)
+Simple python program that relays http connections to https targets.
+Microcontrollers have a hard time communicating with https hosts.
 
 Start the relay:
 
@@ -15,9 +16,8 @@ curl -X POST "http://localhost:8077/botXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 -d "chat_id=XXXXXXXXX&text=Alarm!" --header "X-Relay-Target: api.telegram.org"
 ```
 
-Or if you can't add the X-Relay-Target header, you can provide a default target host this way:
+Or if you can't add the X-Relay-Target header, you can start the relay with a default target host this way:
 
 ```bash
 python https_relay.py -p 8077 -t api.telegram.org
 ```
-
