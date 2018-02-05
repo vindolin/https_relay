@@ -1,4 +1,4 @@
-# https_relay
+# https_relay.py
 
 Simple python program that relays http connections to https targets.
 Microcontrollers have a hard time communicating with https hosts.
