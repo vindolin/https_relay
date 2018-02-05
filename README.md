@@ -25,4 +25,4 @@ Or if you can't add the X-Relay-Target header, you can start the relay with a de
 python https_relay.py -p 8077 -t api.telegram.org
 ```
 
-__No chunked transfers supportet yet!
+__No chunked transfers supportet yet!__
