@@ -10,7 +10,7 @@ Start the relay:
 python https_relay.py -p 8077
 ```
 
-Example usage to post a message with curl to api.telegram.org:
+Example showing how to post a message with curl to api.telegram.org:
 
 ```bash
 curl -X POST "http://localhost:8077/botXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/sendMessage" \
