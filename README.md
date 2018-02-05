@@ -2,7 +2,7 @@
 
 Simple python program that relays HTTP connections to HTTPS targets.
 
-I wrote this because Microcontrollers have a hard time communicating with https hosts.
+I wrote this because microcontrollers have a hard time communicating with https hosts.
 
 Start the relay:
 
