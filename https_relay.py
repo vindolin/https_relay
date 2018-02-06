@@ -34,13 +34,21 @@ def do_wrapper(func):
         self.target_headers = dict(self.headers.items())
 
         print('relaying {}'.format(self.target_url))
+        response = func(self)
 
-        self.wfile.write(func(self).content)
+        self.send_response(response.status_code)
+
+        for name, value in response.headers.items():
+            self.send_header(name, value)
+
+        self.end_headers()
+        self.wfile.write(response.content)
 
     return wrapper
 
 
 class Relay(base_http_server.BaseHTTPRequestHandler):
+
     @do_wrapper
     def do_GET(self):
         return requests.get(self.target_url, headers=self.target_headers)
@@ -65,7 +73,7 @@ class Relay(base_http_server.BaseHTTPRequestHandler):
 
 parser = argparse.ArgumentParser(
     description='Simple HTTP to HTTPS redirector.',
-    epilog='Make sure to either set a default target with --target or send an "X-relay-target: your.target" header with your request!'
+    epilog='Make sure to either set a default target with --target or send an "X-Relay-Target: your.target" header with your request!'
 )
 parser.add_argument('-t', '--default_target', type=str, help='Global default target if you don\'t provide the X-Relay-Target header.')
 parser.add_argument('-i', '--interface', type=str, default='localhost', help='Interface where the relay runs on.')
