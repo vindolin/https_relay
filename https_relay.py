@@ -7,9 +7,19 @@ except ImportError:
     import socketserver
     from urllib.parse import parse_qs
 
+import json
 import requests
 import argparse
 from functools import wraps
+from pprint import pprint
+
+
+class ANSI:
+    green = '\033[32m'
+    orange = '\033[33m'
+    yellow = '\033[93m'
+
+    reset = '\033[0m'
 
 
 def do_wrapper(func):
@@ -37,11 +47,39 @@ def do_wrapper(func):
         response = func(self)
 
         self.send_response(response.status_code)
+        if args.debug:
+            print('\n{}STATUS CODE: {}'.format(ANSI.green, response.status_code, ANSI.reset))
+
+        if args.debug:
+            print('\n{}RESPONSE HEADERS:{}'.format(ANSI.yellow, ANSI.reset))
+            print(ANSI.yellow)
 
         for name, value in response.headers.items():
             self.send_header(name, value)
+            if args.debug:
+                print('    "{}": "{}"'.format(name, value))
+
+        if args.debug:
+            print(ANSI.reset)
 
         self.end_headers()
+
+        if args.debug:
+            print(ANSI.orange)
+            if response.headers.get('Content-Type') == 'application/json':
+                print('\n{}JSON CONTENT:{}'.format(ANSI.orange, ANSI.reset))
+                print(ANSI.orange)
+                pprint(json.loads(response.content.decode('utf8')))
+                print(ANSI.reset)
+            else:
+                print('\n{}CONTENT:{}'.format(ANSI.bold, ANSI.orange, ANSI.reset))
+                print(ANSI.orange)
+                print(response.content)
+                print(ANSI.reset)
+
+        if args.debug:
+            print()
+
         self.wfile.write(response.content)
 
     return wrapper
@@ -76,6 +114,7 @@ parser = argparse.ArgumentParser(
     epilog='Make sure to either set a default target with --target or send an "X-Relay-Target: your.target" header with your request!'
 )
 parser.add_argument('-t', '--default_target', type=str, help='Global default target if you don\'t provide the X-Relay-Target header.')
+parser.add_argument('-d', '--debug', help='Print return codes and data.', action='store_true')
 parser.add_argument('-i', '--interface', type=str, default='localhost', help='Interface where the relay runs on.')
 parser.add_argument('-p', '--port', type=int, default=8000, help='The port that the relay should use.')
 
